@@ -1,11 +1,27 @@
-module.exports.signup = (req: any, res: any) => {
-  res.send('new user created!');
+import { User } from '../models/user';
+import { hashPassword, handleErrors } from '../utils/auth';
+
+export const signup = async (req: any, res: any) => {
+  const { email, password } = req.body;
+
+  const hashedPassword = await hashPassword(password);
+  
+  try{
+    await User.create({ email: email, password: hashedPassword });
+    res.status(201).json({ msg: 'User created successfully!' });
+  }catch(e){
+    const errors = handleErrors(e);
+    res.status(400).json({ errors });
+  }
+
 }
 
-module.exports.login = (req: any, res: any) => {
+export const login = async (req: any, res: any) => {
+  const { email, password } = req.body;
+  console.log(email, password)
   res.send('user logged in..Welcome!');
 }
 
-module.exports.logout = (req: any, res: any) => {
+export const logout = (req: any, res: any) => {
   res.send('user logged out..Bye!');
 }
