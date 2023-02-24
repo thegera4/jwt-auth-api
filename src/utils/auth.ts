@@ -1,4 +1,6 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+//require('dotenv').config();
 
 export const hashPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10);
@@ -21,4 +23,8 @@ export const handleErrors = (err: any) => {
   }
 
   return errors;
+}
+
+export const createToken = (id: string, maxAge: number) => {
+  return jwt.sign({ id }, process.env.SECRET_KEY as string, { expiresIn: maxAge });
 }
