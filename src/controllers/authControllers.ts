@@ -22,10 +22,22 @@ export const signup = async (req: any, res: any) => {
 
 export const login = async (req: any, res: any) => {
   const { email, password } = req.body;
-  console.log(email, password)
-  res.send('user logged in..Welcome!');
+  const maxAge = 3 * 24 * 60 * 60;
+
+  try{
+    const user = await User.login(email, password);
+    const token = createToken(user._id, maxAge);
+    //res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000, sameSite: 'strict', secure: true });
+    res.status(200).json({ msg: 'User logged in successfully!', token });
+  }catch(e){
+    const errors = handleErrors(e);
+    res.status(400).json({ errors });
+  }
+
 }
 
 export const logout = (req: any, res: any) => {
-  res.send('user logged out..Bye!');
+  //res.cookie('jwt', '', { maxAge: 1 });
+  //res.redirect('/');
+  res.send('User logged out..Bye!');
 }

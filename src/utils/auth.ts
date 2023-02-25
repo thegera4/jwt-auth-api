@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-//require('dotenv').config();
 
 export const hashPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10);
@@ -10,6 +9,14 @@ export const hashPassword = async (password: string) => {
 
 export const handleErrors = (err: any) => {
   let errors = { email: '', password: '' };
+
+  if(err.message === 'Incorrect email'){
+    errors.email = 'That email is not registered';
+  }
+
+  if(err.message === 'Incorrect password'){
+    errors.password = 'That password is incorrect';
+  }
 
   if(err.code === 11000){
     errors.email = 'That email is already registered';
@@ -21,7 +28,7 @@ export const handleErrors = (err: any) => {
       errors[properties.path as keyof typeof errors] = properties.message;
     });
   }
-
+  
   return errors;
 }
 
