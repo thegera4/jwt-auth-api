@@ -3,7 +3,7 @@ export const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const { requireAuth } = require('./middleware/authMiddleware');
+const { requireAuth, checkCurrentUser } = require('./middleware/authMiddleware');
 require('dotenv').config();
 
 const app = express();
@@ -32,6 +32,7 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true})
   .catch((err: any) => console.error(err));
 
 //routes
+app.get('*', checkCurrentUser); //this will check for the jwt in every request and if it exists it will set the user in the res.locals object
 app.get('/', (req: any, res: any) => res.send('Welcome to my own custom auth system!'));
 app.get('/about', requireAuth, (req: any, res: any ) => res.send('This is my custom auth system made with Node.js, Express.js, MongoDB, Mongoose, and Typescript and I use it for my own projects!. This auth system uses JWT for authentication and cookies for authorization as well as bcrypt for hashing passwords and mongo db for storing user data.'));
 
